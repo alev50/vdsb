@@ -2,16 +2,24 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\News;
 
-class NewsController {
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+
+class NewsController extends AbstractController {
     
     /**
      * @Route("/news/{id}", name="app_news")
      */
-    public function index($id) {
-        return new JsonResponse(array('title' => 'Hello world !', 'details' => 'Ceci est un test.'));
+    public function index($id, SerializerInterface $serializer) {
+        $news = $this->getDoctrine()->getRepository(News::class)->find($id);
+        $jsonContent = $serializer->normalize($news);
+
+        return new JsonResponse($jsonContent);
     }
 
 }
